@@ -32,11 +32,16 @@ class Data_Loader():
         else:
             import pandas as pd
             data = pd.read_csv(self.fname)
-            X = data.iloc[:,:-1].values
-            y = data.iolc[:,-1].values
+            print("Detected Headers are :")
+            print([x for x in data])
             if(self.clean):
-                #Implementation pending....
-                pass
+                for x in data:
+                    x[x.isnull()] = x.median()     
+            target = input("Enter Target column : ")
+            while target not in data:
+                target = input("\rEnter Correct Target Column :")
+            X = data.loc[:,data.columns!=target].values
+            y = data[:,-1].values
             return X,y
             
             
