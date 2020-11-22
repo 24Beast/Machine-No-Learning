@@ -10,7 +10,7 @@ class Data_Loader():
         if(self.dtype=="CSV"):
             self.clean = opt["clean"]
         else:
-            self.shape = opt["shape"]
+            self.shape = tuple(opt["shape"])
             
     def reader(self):
         if(self.dtype == "Image"):
@@ -25,7 +25,7 @@ class Data_Loader():
             for i in range(len(files)):
                 imgs = os.listdir(self.fname+files[i])
                 for img in imgs:
-                    X[count] = cv2.imread(self.fname+files[i]+img)
+                    X[count] = cv2.resize(cv2.imread(self.fname+files[i]+img),self.shape)
                     y[count] = i
                     count+=1
             return X,y
