@@ -4,7 +4,7 @@ class Data_Loader():
     
     def __init__(self,opt):
         self.fname = opt["fname"]
-        self.dtype = opt["data-form"] #Images vs csv
+        self.dtype = opt["data-form"] # Images vs CSV
         self.clean = None
         self.shape = None
         if(self.dtype=="CSV"):
