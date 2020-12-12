@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_restful import reqparse, abort, Api, Resource
 from Simple_Models import Model_Creator as creator
+from File_Maker import File_Creator
 
 app = Flask(__name__)
 api = Api(app)
@@ -19,6 +20,8 @@ class Main_Page(Resource):
     def post(self):
         json_data = request.get_json(force = True)
         username = json_data("user_name")
+        model = json_data("model")
+        args = json_data("args")
         model = creator(json_data)
         model.get_new_model()
         model.save("Models",username)

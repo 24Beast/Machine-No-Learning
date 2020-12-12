@@ -6,6 +6,8 @@ from model import modelToBeImported
 
 # Importing the dataset
 dataset = pd.read_csv('Position_Salaries.csv')
+X_col = ['a', 'b']
+y_col = ['c']
 X = dataset[X_col].values
 y = dataset[y_col].values
 

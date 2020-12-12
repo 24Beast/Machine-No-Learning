@@ -6,9 +6,4 @@ from math import floor, ceil
 class modelToBeImported():
 	def createModel(self):
 		self.model = Sequential()
-		self.model.add(Dense(10, input_shape = (5,), activation = None))
-		self.model.add(Dense(20, activation = None))
-		self.model.add(Dense(40, activation = None))
-		self.model.add(Dense(20, activation = None))
-		self.model.add(Dense(10, activation = None))
-		self.model.add(Dense(1, activation = "softmax"))
+		self.model.add(Dense(1, input_shape = (5,), activation = None))
