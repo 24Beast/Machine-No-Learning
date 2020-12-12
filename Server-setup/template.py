@@ -2,6 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import model.py
 
 # Importing the dataset
 dataset = pd.read_csv('Position_Salaries.csv')
@@ -22,7 +23,10 @@ y_train = sc_y.fit_transform(y_train)"""
 
 # Creating and Fitting the Model to the dataset
 
-regressor.fit(X_train,y_train)
+# model.py will have the wrapper model class: modelToBeImported who's name will be same regardless of which model it is
+model = modelToBeImported()
+
+model.fit(X_train,y_train)
 
 # Predicting a new result
-y_pred = regressor.predict(X_test)
+y_pred = model.predict(X_test)
