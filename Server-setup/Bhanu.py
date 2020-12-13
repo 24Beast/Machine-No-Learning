@@ -3,8 +3,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from model import modelToBeImported
+from CSV_Data_Loader import Data_Loader
 
 # Importing the dataset
+data = Data_Loader({'fname': 'abc.csv', 'clean': True})
+X_cols = ['A', 'B', 'C']
+y_col = ['D']
+X,y = data.read(X_cols,y_col)
 
 # Splitting the dataset into the Training set and Test set
 from sklearn.model_selection import train_test_split
