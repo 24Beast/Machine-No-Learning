@@ -10,9 +10,10 @@ from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
 
-def createDenseNetwork(numberOfLayers, numberOfInputNodes, numberOfOutputNodes, typeOfModel = "Regression", hiddenLayerNodes = None, activationFunctions = None):
+def createDenseNetwork(user_name,numberOfLayers, numberOfInputNodes, numberOfOutputNodes, typeOfModel = "Regression", hiddenLayerNodes = None, activationFunctions = None):
     # Linear Neural Network / Multi Layer Perceptron Network
     
+    # user_name: Folder where file is to be generated
     # numOfLayers: number of layers(compulsory, including input and output layers, >=2)
     # numOfInputNodes: number of input variables(compulsory)
     # numOfOutputNodes: number of output variables(compulsory)
@@ -21,7 +22,7 @@ def createDenseNetwork(numberOfLayers, numberOfInputNodes, numberOfOutputNodes, 
     # activationFunctions: list of activation functions excluding input layer(Default: None for hidden layers and for output layer: Softmax(Classification) or None(Regression))
     
     # Writing the starting includes in the model.py file
-    f = open("model.py",'w')
+    f = open(user_name+"\\model.py",'w')
     f.write("import tensorflow as tf \nimport numpy as np \nfrom tensorflow.keras import Sequential \nfrom tensorflow.keras.layers import Dense, Conv2D, Flatten \nfrom math import floor, ceil\n")    
     f.write("class modelToBeImported():\n\tdef createModel(self):\n")
     
@@ -135,10 +136,11 @@ def createDenseNetwork(numberOfLayers, numberOfInputNodes, numberOfOutputNodes, 
         return model    
 
 
-def create2DCNNNetwork(numOfConvLayers, numOfDenseLayers, inputShape, numOfOutCats, typeOfModel = "Classification", numOfFilters = None, kernelSizes = None, strides = None, padding = "valid", activationFunctions = None):
+def create2DCNNNetwork(user_name,numOfConvLayers, numOfDenseLayers, inputShape, numOfOutCats, typeOfModel = "Classification", numOfFilters = None, kernelSizes = None, strides = None, padding = "valid", activationFunctions = None):
 
     # Standard 2D-CNN network
-
+    
+    # user_name: Folder where file is to be generated
     # structure: upscaling CNN layers followed by flatten layer, followed by downscaling dense layers
     # 
     # inputs to the construction function:
@@ -157,7 +159,7 @@ def create2DCNNNetwork(numOfConvLayers, numOfDenseLayers, inputShape, numOfOutCa
 
     # Writing starting includes in the model.py file
     
-    f = open("model.py",'w')
+    f = open(user_name+"\\model.py",'w')
     f.write("import tensorflow as tf \nimport numpy as np \nfrom tensorflow.keras import Sequential \nfrom tensorflow.keras.layers import Dense, Conv2D, Flatten \nfrom math import floor, ceil\n")    
     f.write("class modelToBeImported():\n\tdef createModel(self):\n")
     
@@ -239,9 +241,9 @@ def create2DCNNNetwork(numOfConvLayers, numOfDenseLayers, inputShape, numOfOutCa
 
 # Sklearn models =>
 
-def create_model_file(lib, model_name, args):
+def create_model_file(user_name,lib, model_name, args):
 #     self.get_model_info()
-    file = open("model.py","w")
+    file = open(user_name+"\\model.py","w")
     lines = ["#Importing Necessary Libraries\n",
              "from "+lib+" import "+model_name+"\n",
              "\n#Class Definition\n\nclass modelToBeImported():\n\n",
@@ -256,17 +258,19 @@ def create_model_file(lib, model_name, args):
     file.close()
     
     
-def linearRegressionConstructor(includeIntercept = True, normalizeData = False, copyX = True):
+def linearRegressionConstructor(user_name,includeIntercept = True, normalizeData = False, copyX = True):
+    # user_name: Folder where file is to be generated
     # includeIntercepts: if the data is centered around 0, we don't need this, basically handles bias
     # normalizeData: normalisation involves subtracting mean and dividing by l2-norm
     # copyX: in case of normalising the data, the original may or may not be overwritten, this creates a copy of the data
     
     model = LinearRegression(fit_intercept = includeIntercept, normalize = normalizeData, copy_X = copyX)
     args = "fit_intercept = {}, normalize = {}, copy_X = {}".format(includeIntercept, normalizeData, copyX)
-    create_model_file("sklearn.linear_model","LinearRegression",args)
+    create_model_file(user_name,"sklearn.linear_model","LinearRegression",args)
     return model
 
-def randomForestRegressionConstructor(numTrees = 100, maxDepth = None, numForSplit = 2, numForLeaf = 1):
+def randomForestRegressionConstructor(user_name,numTrees = 100, maxDepth = None, numForSplit = 2, numForLeaf = 1):
+    # user_name: Folder where file is to be generated
     # numTrees: number of trees in the forest
     # maxDepth: max depth/ height of each tree in the forest
     # numForSplit: min number of samples for splitting an internal node (non leaf)
@@ -274,10 +278,11 @@ def randomForestRegressionConstructor(numTrees = 100, maxDepth = None, numForSpl
     
     model = RandomForestRegressor(n_estimators = numTrees, max_depth = maxDepth, min_samples_split = numForSplit, min_samples_leaf = numForLeaf)
     args = "n_estimators = {}, max_depth = {}, min_samples_split = {}, min_samples_leaf = {}".format(numTrees, maxDepth, numForSplit, numForLeaf)
-    create_model_file("sklearn.ensemble","RandomForestRegressor",args)
+    create_model_file(user_name,"sklearn.ensemble","RandomForestRegressor",args)
     return model
 
-def randomForestClassificationConstructor(numTrees = 100, estFunc = "gini", maxDepth = None, numForSplit = 2, numForLeaf = 1):
+def randomForestClassificationConstructor(user_name,numTrees = 100, estFunc = "gini", maxDepth = None, numForSplit = 2, numForLeaf = 1):
+    # user_name: Folder where file is to be generated
     # numTrees: number of trees in the forest
     # estFunc: the function to measure the quality of a split (responsible for deciding when to split) => gini or entropy
     # maxDepth: max depth/ height of each tree in the forest
@@ -286,16 +291,17 @@ def randomForestClassificationConstructor(numTrees = 100, estFunc = "gini", maxD
     
     model = RandomForestClassifier(n_estimators = numTrees, criterion = estFunc, max_depth = maxDepth, min_samples_split = numForSplit, min_samples_leaf = numForLeaf)
     args = "n_estimators = {}, criterion = \"{}\", max_depth = {}, min_samples_split = {}, min_samples_leaf = {}".format(numTrees, estFunc, maxDepth, numForSplit, numForLeaf)
-    create_model_file("sklearn.ensemble","RandomForestClassifier",args)
+    create_model_file(user_name,"sklearn.ensemble","RandomForestClassifier",args)
     return model
 
-def kNearestNeighborsClassifier(numNeighbors = 5, weighedByDistance = False, distType = 2):
+def kNearestNeighborsClassificationConstructor(user_name,numNeighbors = 5, weighedByDistance = False, distType = 2):
+    # user_name: Folder where file is to be generated
     # numNeighbors: number of nearest neighbors considered for estimation
     # weighedByDistance: whether or not influence in decision varies according to distance
     # distType: power parameter for minkowski metric: 1=> l1(manhattan distance) or 2=> l2(euclidian distance)
     
     model = KNeighborsClassifier(n_neighbors = numNeighbors, weights = ("distance" if weighedByDistance else "uniform"), p = distType)
     args = "n_neighbors = {}, weights = \"{}\", p = {}".format(numNeighbors, "distance" if weighedByDistance else "uniform", distType)
-    create_model_file("sklearn.neighbors","KNeighborsClassifier",args)
+    create_model_file(user_name,"sklearn.neighbors","KNeighborsClassifier",args)
     return model
         

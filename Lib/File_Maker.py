@@ -6,10 +6,10 @@ import sys
 class File_Creator():
     
     def __init__(self,user_name,data_type,args=""):        
-        command = "cp template.py "
+        command = "cp Lib\\template.py "
         if(sys.platform[:3] == "win"):
-            command = "copy template.py "
-        command = command + user_name +".py"
+            command = "copy Lib\\template.py "
+        command = command + user_name + "\\main.py"
         os.system(command)
         self.user_name = user_name
         self.dtype = data_type
@@ -17,7 +17,7 @@ class File_Creator():
     
     def write_file(self,x_cols=None,y_cols=None):
         if(self.dtype=="CSV"):
-            file = open(user_name+".py","r+")
+            file = open(self.user_name+"\\main.py","r+")
             lines = file.readlines()
             lines.insert(5,"from CSV_Data_Loader import Data_Loader\n")
             lines.insert(8,"data = Data_Loader("+str(self.args)+")\n")
@@ -28,7 +28,7 @@ class File_Creator():
             file.writelines(lines)
             file.close()
         else:
-            file = open(user_name+".py","r+")
+            file = open(self.user_name+"\\main.py","r+")
             lines = file.readlines()
             lines.insert(5,"from Image_Data_Loader import Data_Loader\n")
             lines.insert(8,"data = Data_Loader("+str(self.args)+")\n")
@@ -38,10 +38,10 @@ class File_Creator():
             file.close()
         
 
-# Execution
-# user_name = sys.argv[1]
-user_name = "Bhanu_img"
-# csv = File_Creator(user_name,"CSV",{"fname":"abc.csv","clean":True})
-# csv.write_file(["A","B","C"],["D"])
-image = File_Creator(user_name,"Image",{"fname":"abc","shape":(120,120)})
-image.write_file()
+# # Execution
+# # user_name = sys.argv[1]
+# user_name = "Bhanu_img"
+# # csv = File_Creator(user_name,"CSV",{"fname":"abc.csv","clean":True})
+# # csv.write_file(["A","B","C"],["D"])
+# image = File_Creator(user_name,"Image",{"fname":"abc","shape":(120,120)})
+# image.write_file()
