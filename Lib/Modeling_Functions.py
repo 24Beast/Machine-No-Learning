@@ -1,28 +1,24 @@
-#!/usr/bin/env python
-# coding: utf-8
+# Collection of Wrapper Functions to create models (both Neural Nets and traditional Libraries) used by the Machine-No-Learning API
 
-# In[4]:
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten
+
 from math import ceil
 
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
-# In[34]:
-
-
-# Linear Neural Network / Multi Layer Perceptron Network
-
-
-# inputs to the construction function:
-# number of layers(compulsory, including input and output layers, >=2)
-# number of input variables(compulsory)
-# number of output variables(compulsory)
-# type of model: Regression or Classification (Default: Regression)
-# array of number of nodes in each hidden layer (Default: increases uniformly for half of the layers and then decreases uniformly for the latter half)
-# activation functions excluding input layer(Default: None for hidden layers and for output layer: Softmax(Classification) or None(Regression))
-# 
 
 def createDenseNetwork(numberOfLayers, numberOfInputNodes, numberOfOutputNodes, typeOfModel = "Regression", hiddenLayerNodes = None, activationFunctions = None):
+    # Linear Neural Network / Multi Layer Perceptron Network
+    
+    # numOfLayers: number of layers(compulsory, including input and output layers, >=2)
+    # numOfInputNodes: number of input variables(compulsory)
+    # numOfOutputNodes: number of output variables(compulsory)
+    # typeOfModel: Regression or Classification (Default: Regression)
+    # hiddenLayerNodes: array of number of nodes in each hidden layer (Default: increases uniformly for half of the layers and then decreases uniformly for the latter half)
+    # activationFunctions: list of activation functions excluding input layer(Default: None for hidden layers and for output layer: Softmax(Classification) or None(Regression))
     
     # Writing the starting includes in the model.py file
     f = open("model.py",'w')
@@ -139,32 +135,26 @@ def createDenseNetwork(numberOfLayers, numberOfInputNodes, numberOfOutputNodes, 
         return model    
 
 
-
-# In[28]:
-
-
-# Standard 2D-CNN network
-
-# structure: upscaling CNN layers followed by flatten layer, followed by downscaling dense layers
-# 
-# inputs to the construction function:
-# number of convlayers(compulsory) these do not include the input layer i.e. can be >=1
-# number of denselayers(compulsory) these do not include the output layer i.e. can be >=1
-# input_shape((height, width, channels),compulsory)
-# number of output categories(compulsory)
-# type of model: Regression or Classification (Default: Classification)
-# array of number of filters in each conv layer (Default: doubles the number of filters in each conv layer)
-# array of kernel sizes (Default: 3x3)
-# array of strides (Default: 1x1)
-# padding (Default: Valid (i.e. No padding))
-# 
-# 
-# activation functions(Default: None for hidden layers and for output layer: Softmax(Classification) or None(Regression))
-# 
-# 
-
 def create2DCNNNetwork(numOfConvLayers, numOfDenseLayers, inputShape, numOfOutCats, typeOfModel = "Classification", numOfFilters = None, kernelSizes = None, strides = None, padding = "valid", activationFunctions = None):
-    
+
+    # Standard 2D-CNN network
+
+    # structure: upscaling CNN layers followed by flatten layer, followed by downscaling dense layers
+    # 
+    # inputs to the construction function:
+    # number of convlayers(compulsory) these do not include the input layer i.e. can be >=1
+    # number of denselayers(compulsory) these do not include the output layer i.e. can be >=1
+    # input_shape((height, width, channels),compulsory)
+    # number of output categories(compulsory)
+    # type of model: Regression or Classification (Default: Classification)
+    # array of number of filters in each conv layer (Default: doubles the number of filters in each conv layer)
+    # array of kernel sizes (Default: 3x3)
+    # array of strides (Default: 1x1)
+    # padding (Default: Valid (i.e. No padding))
+    # 
+    # 
+    # activation functions(Default: None for hidden layers and for output layer: Softmax(Classification) or None(Regression))
+
     # Writing starting includes in the model.py file
     
     f = open("model.py",'w')
@@ -246,48 +236,66 @@ def create2DCNNNetwork(numOfConvLayers, numOfDenseLayers, inputShape, numOfOutCa
     return model
 
 
-# In[ ]:
 
+# Sklearn models =>
 
-# SK_Model_Creator : Model file creator for sklearn based 
-class SK_Model_Creator():
+def create_model_file(lib, model_name, args):
+#     self.get_model_info()
+    file = open("model.py","w")
+    lines = ["#Importing Necessary Libraries\n",
+             "from "+lib+" import "+model_name+"\n",
+             "\n#Class Definition\n\nclass modelToBeImported():\n\n",
+             "\tdef createModel(self):\n"]
+    lines.append("\t\tself.model = "+model_name+"("+args+")\n\n")
+    lines.append("\tdef fit(self,X,y):\n")
+    lines.append("\t\tself.model.fit(X,y)\n\n")
+    lines.append("\tdef predict(self,X):\n")
+    lines.append("\t\treturn self.model.predict(X)\n")
+    file.seek(0)
+    file.writelines(lines)
+    file.close()
     
-    def __init__(self,model_type,model_args,file_name="model"):
-        self.model_type = model_type
-        self.model_args = model_args
-        self.file = file_name
-        self.model_name = None
-        self.lib = None
-        
-    def get_model_info(self):
-        if(self.model_type == "Linear_Regressor"):
-            self.model_name = "LinearRegression"
-            self.lib = "sklearn.linear_model"
-        elif(self.model_type == "Random-Forest-Regressor"):
-            self.model_name = "RandomForestRegressor"
-            self.lib = "sklearn.ensemble"
-        elif(self.model_type == "KNN-Classifier"):
-            self.model_name = "KNeighborsClassifier"
-            self.lib = "sklearn.neighbors"
-        elif(self.model_type == "Random-Forest-Classifier"):
-            self.model_name = "RandomForestClassifier"
-            self.lib = "sklearn.ensemble"
     
-    def create_model_file(self):
-        self.get_model_info()
-        file = open(self.file+".py","w")
-        lines = ["#Importing Necessary Libraries\n",
-                 "from "+self.lib+" import "+self.model_name+"\n",
-                 "\n#Class Definition\n\nclass modelToBeImported():\n\n",
-                 "\tdef __init__(self):\n\t\tself.model = None\n\n",
-                 "\tdef createModel(self):\n"]
-        lines.append("\t\tself.model = "+self.model_name+"("+str(self.model_args)+")\n\n")
-        lines.append("\tdef fit(self,X,y):\n")
-        lines.append("\t\tself.model.fit(X,y)\n\n")
-        lines.append("\tdef predict(self,X):\n")
-        lines.append("\t\treturn self.model.predict(X)\n")
-        file.seek(0)
-        file.writelines(lines)
-        file.close()
-        
+def linearRegressionConstructor(includeIntercept = True, normalizeData = False, copyX = True):
+    # includeIntercepts: if the data is centered around 0, we don't need this, basically handles bias
+    # normalizeData: normalisation involves subtracting mean and dividing by l2-norm
+    # copyX: in case of normalising the data, the original may or may not be overwritten, this creates a copy of the data
+    
+    model = LinearRegression(fit_intercept = includeIntercept, normalize = normalizeData, copy_X = copyX)
+    args = "fit_intercept = {}, normalize = {}, copy_X = {}".format(includeIntercept, normalizeData, copyX)
+    create_model_file("sklearn.linear_model","LinearRegression",args)
+    return model
 
+def randomForestRegressionConstructor(numTrees = 100, maxDepth = None, numForSplit = 2, numForLeaf = 1):
+    # numTrees: number of trees in the forest
+    # maxDepth: max depth/ height of each tree in the forest
+    # numForSplit: min number of samples for splitting an internal node (non leaf)
+    # numForLeaf: min number of samples for being a leaf node, changing from 1 can help smooth the model
+    
+    model = RandomForestRegressor(n_estimators = numTrees, max_depth = maxDepth, min_samples_split = numForSplit, min_samples_leaf = numForLeaf)
+    args = "n_estimators = {}, max_depth = {}, min_samples_split = {}, min_samples_leaf = {}".format(numTrees, maxDepth, numForSplit, numForLeaf)
+    create_model_file("sklearn.ensemble","RandomForestRegressor",args)
+    return model
+
+def randomForestClassificationConstructor(numTrees = 100, estFunc = "gini", maxDepth = None, numForSplit = 2, numForLeaf = 1):
+    # numTrees: number of trees in the forest
+    # estFunc: the function to measure the quality of a split (responsible for deciding when to split) => gini or entropy
+    # maxDepth: max depth/ height of each tree in the forest
+    # numForSplit: min number of samples for splitting an internal node (non leaf)
+    # numForLeaf: min number of samples for being a leaf node, changing from 1 can help smooth the model
+    
+    model = RandomForestClassifier(n_estimators = numTrees, criterion = estFunc, max_depth = maxDepth, min_samples_split = numForSplit, min_samples_leaf = numForLeaf)
+    args = "n_estimators = {}, criterion = \"{}\", max_depth = {}, min_samples_split = {}, min_samples_leaf = {}".format(numTrees, estFunc, maxDepth, numForSplit, numForLeaf)
+    create_model_file("sklearn.ensemble","RandomForestClassifier",args)
+    return model
+
+def kNearestNeighborsClassifier(numNeighbors = 5, weighedByDistance = False, distType = 2):
+    # numNeighbors: number of nearest neighbors considered for estimation
+    # weighedByDistance: whether or not influence in decision varies according to distance
+    # distType: power parameter for minkowski metric: 1=> l1(manhattan distance) or 2=> l2(euclidian distance)
+    
+    model = KNeighborsClassifier(n_neighbors = numNeighbors, weights = ("distance" if weighedByDistance else "uniform"), p = distType)
+    args = "n_neighbors = {}, weights = \"{}\", p = {}".format(numNeighbors, "distance" if weighedByDistance else "uniform", distType)
+    create_model_file("sklearn.neighbors","KNeighborsClassifier",args)
+    return model
+        
