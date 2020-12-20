@@ -3,7 +3,6 @@ import os
 import sys
 from Lib.Modeling_Functions import *
 from Lib.File_Maker import File_Creator
-from File_Maker import File_Creator
 from flask import Flask, jsonify, request
 from flask_restful import reqparse, abort, Api, Resource
 
@@ -28,7 +27,7 @@ class Main_Page(Resource):
     
     def post(self):
         json_data = request.get_json(force = True)
-        username = json_data("user_name")
+        username = json_data["user_name"]
         if (os.path.isdir(username)):
             os.system("del /q "+username)
         else:
@@ -47,13 +46,13 @@ class User_Page(Resource):
             
     def post(self,name):
         if (os.path.isdir(name)):
-            os.system("del /q "+username)
+            os.system("del /q "+name)
         else:
             return {"Sad Noises" : "User Not Found."}
         json_data = request.get_json(force = True)
-        model = model_map[str(json_data("model"))]
-        data_type = str(json_data("data_type"))
-        args = json_data("args")
+        model = model_map[str(json_data["model"])]
+        data_type = str(json_data["data_type"])
+        args = json_data["args"]
         command = "cp "
         if(sys.platform[:3] == "win"):
             command = "copy "
@@ -62,7 +61,7 @@ class User_Page(Resource):
         else:
             command += csv + name + "\\CSV_Data_Loader.py"
         os.system(command)
-        model(name)
+        model(name,**args)
         f = File_Creator(name,data_type)
         f.write_file()
         return {"Happy":"Noises"}
