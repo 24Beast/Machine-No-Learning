@@ -18,7 +18,7 @@ class Data_Loader():
         -------
         None.
         '''
-        self.fnaem = fname
+        self.fname = fname
         self.clean = clean
 
     def read(self,features,target):
