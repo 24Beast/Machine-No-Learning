@@ -50,9 +50,14 @@ class User_Page(Resource):
         else:
             return {"Sad Noises" : "User Not Found."}
         json_data = request.get_json(force = True)
-        model = model_map[str(json_data["model"])]
-        data_type = str(json_data["data_type"])
-        args = json_data["args"]
+        model = model_map[str(json_data["model"])]  # Model selection from those available in model_map
+        data_type = str(json_data["data_type"])     # Image or CSV
+        args = json_data["args"]                    # Arguements for the model  
+        fname = json_data["fname"]                  # File to be read (Will be converted to readable url for Google Drive Shareable Link )
+        if(fname.startswith("https://drive.google.com/file/d")):
+            fname = path = 'https://drive.google.com/uc?export=download&id='+fname.split('/')[-2]
+        X_cols = json_data["X"]                     # Feature Column No. (Index starts at 0)
+        y_cols = json_data["y"]                     # Target Column/s.
         command = "cp "
         if(sys.platform[:3] == "win"):
             command = "copy "
@@ -62,8 +67,8 @@ class User_Page(Resource):
             command += csv + name + "\\CSV_Data_Loader.py"
         os.system(command)
         model(name,**args)
-        f = File_Creator(name,data_type)
-        f.write_file()
+        f = File_Creator(name,data_type,fname)
+        f.write_file(X_cols,y_cols)
         return {"Happy":"Noises"}
         
 api.add_resource(Main_Page,"/")
