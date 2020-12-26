@@ -3,8 +3,8 @@ import os
 import sys
 from Lib.Modeling_Functions import *
 from Lib.File_Maker import File_Creator
-from flask import Flask, jsonify, request
-from flask_restful import reqparse, abort, Api, Resource
+from flask import Flask, request
+from flask_restful import Api, Resource
 
 # Initialization
 app = Flask(__name__)
@@ -15,8 +15,14 @@ model_map = {"ANN" : createDenseNetwork,
              "CNN" : create2DCNNNetwork,
              "Linear_Reg" : linearRegressionConstructor,
              "Random_Forest_Reg" :randomForestRegressionConstructor,
+             "SVM_Reg" : supportVectorRegressorConstructor,
              "KNN_Class" : kNearestNeighborsClassificationConstructor,
-             "Random_Forest_Class" : randomForestClassificationConstructor}
+             "SVM_Class" : supportVectorClassifierConstructor,
+             "NaiveBayes_Class" : naiveBayesClassifierConstructor,
+             "Logistic_Class" : logisticRegressionConstructor,
+             "Random_Forest_Class" : randomForestClassificationConstructor,
+             "KNN_Cluster" : kMeansClusteringConstructor,
+             "Agglomerative_Cluster" : agglomerativeClusteringConstructor}
 
 class Main_Page(Resource):
     def __init__(self):
@@ -55,7 +61,7 @@ class User_Page(Resource):
         args = json_data["args"]                    # Arguements for the model  
         fname = json_data["fname"]                  # File to be read (Will be converted to readable url for Google Drive Shareable Link )
         if(fname.startswith("https://drive.google.com/file/d")):
-            fname = path = 'https://drive.google.com/uc?export=download&id='+fname.split('/')[-2]
+            fname = 'https://drive.google.com/uc?export=download&id='+fname.split('/')[-2]
         X_cols = json_data["X"]                     # Feature Column No. (Index starts at 0)
         y_cols = json_data["y"]                     # Target Column/s.
         command = "cp "
